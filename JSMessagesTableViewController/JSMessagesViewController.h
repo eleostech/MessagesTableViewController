@@ -48,7 +48,15 @@ typedef enum {
     JSMessagesViewTimestampPolicyCustom
 } JSMessagesViewTimestampPolicy;
 
-
+#ifndef JSMESSAGES_WEAK
+#if __has_feature(objc_arc_weak)
+#define JSMESSAGES_WEAK weak
+#elif __has_feature(objc_arc)
+#define JSMESSAGES_WEAK unsafe_unretained
+#else
+#define JSMESSAGES_WEAK assign
+#endif
+#endif
 
 @protocol JSMessagesViewDelegate <NSObject>
 @required
@@ -70,8 +78,8 @@ typedef enum {
 
 @interface JSMessagesViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UITextViewDelegate>
 
-@property (weak, nonatomic) id<JSMessagesViewDelegate> delegate;
-@property (weak, nonatomic) id<JSMessagesViewDataSource> dataSource;
+@property (JSMESSAGES_WEAK, nonatomic) id<JSMessagesViewDelegate> delegate;
+@property (JSMESSAGES_WEAK, nonatomic) id<JSMessagesViewDataSource> dataSource;
 @property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) JSMessageInputView *inputView;
 @property (assign, nonatomic) CGFloat previousTextViewContentHeight;
