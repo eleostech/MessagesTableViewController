@@ -66,7 +66,13 @@
 
 - (void)setup
 {
-    self.image = [[UIImage imageNamed:@"input-bar"] resizableImageWithCapInsets:UIEdgeInsetsMake(19.0f, 3.0f, 19.0f, 3.0f)];
+    UIImage *barImage = [UIImage imageNamed:@"input-bar"];
+    if ([barImage respondsToSelector:@selector(resizableImageWithCapInsets:)]) {
+        barImage = [barImage resizableImageWithCapInsets:UIEdgeInsetsMake(19.0f, 3.0f, 19.0f, 3.0f)];
+    } else {
+        barImage = [barImage stretchableImageWithLeftCapWidth:3.0f topCapHeight:19.0f];
+    }
+    self.image = barImage;
     self.backgroundColor = [UIColor whiteColor];
     self.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin);
     self.opaque = YES;
@@ -99,7 +105,13 @@
                                                                                 0.0f,
                                                                                 self.textView.frame.size.width + 2.0f,
                                                                                 self.frame.size.height)];
-    inputFieldBack.image = [[UIImage imageNamed:@"input-field"] resizableImageWithCapInsets:UIEdgeInsetsMake(20.0f, 12.0f, 18.0f, 18.0f)];
+    UIImage *backImage = [UIImage imageNamed:@"input-field"];
+    if ([backImage respondsToSelector:@selector(resizableImageWithCapInsets:)]) {
+        backImage = [backImage resizableImageWithCapInsets:UIEdgeInsetsMake(20.0f, 12.0f, 18.0f, 18.0f)];
+    } else {
+        backImage = [backImage stretchableImageWithLeftCapWidth:12.0f topCapHeight:20.0f];
+    }
+    inputFieldBack.image = backImage;
     inputFieldBack.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
     inputFieldBack.backgroundColor = [UIColor clearColor];
     [self addSubview:inputFieldBack];
@@ -134,6 +146,7 @@
                                                   0.0f);
     
     self.textView.scrollEnabled = (numLines >= 4);
+    [self.textView scrollRangeToVisible:self.textView.selectedRange];
 }
 
 + (CGFloat)textViewLineHeight
