@@ -1,172 +1,138 @@
-# MessagesTableViewController
+![JSQMessagesViewController banner](https://raw.githubusercontent.com/jessesquires/JSQMessagesViewController/develop/Assets/jsq_messages_banner.png)
 
-A messages UI for iPhone and iPad.
+[![Build Status](https://secure.travis-ci.org/jessesquires/JSQMessagesViewController.svg)](http://travis-ci.org/jessesquires/JSQMessagesViewController) [![Version Status](http://img.shields.io/cocoapods/v/JSQMessagesViewController.png)][docsLink] [![license MIT](http://img.shields.io/badge/license-MIT-orange.png)][mitLink]
 
 ![Messages Screenshot 1][img1] &nbsp;&nbsp;&nbsp; ![Messages Screenshot 2][img2]
 
-This messages tableview controller is very similar to the one in the iOS Messages app. **Note, this is only a messaging UI, not a messaging app.** This is intended to be used in an existing app where you have (or are developing) a messaging system and need a user interface for it.
+> More screenshots available at [CocoaControls](https://www.cocoacontrols.com/controls/jsqmessagesviewcontroller)
 
-**See more [screenshots][link1] in the `Screenshots/` directory. (Surprise!)**
+## Requirements
 
-## About
+* iOS 7.0+ 
+* ARC
+* [JSQSystemSoundPlayer][playerLink]
 
-This is based on work by [@soffes](http://github.com/soffes) [SSMessagingViewController][ss]. 
+*Need support for iOS 6? [You shouldn't](http://www.macrumors.com/2014/07/14/apple-ios-7-adoption-90-percent/). But, there's a branch for that!* 
+````
+git checkout iOS6_support_stable
+````
 
-I developed this to use in [Hemoglobe](http://www.hemoglobe.com) for private messages between users.
-
-[Square message bubbles][img4] designed by [@michaelschultz](http://www.twitter.com/michaelschultz).
-
-## Features 
-
-* Up-to-date for iOS 6.0 and ARC (iOS 5.0+ required)
-* Storyboards support (if that's how you roll)
-* Universal for iPhone and iPad
-* Allows arbitrary message (and bubble) sizes
-* Timestamp options
-* Swipe/pull down to hide keyboard
-* Dynamically resizes input text view as you type
-* Smooth hiding/showing keyboard animations with `NSNotification`
-* Automatically enables/disables send button if text view is empty or not
-* Smooth send animations
-* Send/Receive sound effects
-* Various bubble styles
+*Note: the `iOS6_support_stable` branch does not include many of the latest hip and fancy features or fixes*
 
 ## Installation
 
-### From [CocoaPods](http://www.cocoapods.org)
-
-    pod 'JSMessagesViewController'
-
-### From source
-
-* Drag the `JSMessagesTableViewController/` folder to your project.
-* Add the `AudioToolbox.framework` to your project, if you want to use the sound effects
-
-## How To Use
-
-#####Subclass `JSMessagesViewController`
-
-* In `- (void)viewDidLoad`
-	* Set your view controller as the `delegate` and `datasource`
-	* Set your view controller `title`
-
-#####Implement the `JSMessagesViewDelegate` protocol
-
-````objective-c 
-- (void)sendPressed:(UIButton *)sender withText:(NSString *)text
+````
+pod 'JSQMessagesViewController'
 ````
 
-* Hook into your own backend here
-* Call `[self finishSend]` at the end of this method to animate and reset the text input view
-* Optionally play sound effects
-	* For outgoing messages `[JSMessageSoundEffect playMessageSentSound]`
-	* For incoming messages `[JSMessageSoundEffect playMessageReceivedSound]`
+Otherwise, drag the `JSQMessagesViewController/` folder to your project. Install [`JSQSystemSoundPlayer`][playerLink] and add the `QuartzCore.framework`.
 
-````objective-c 
-- (JSBubbleMessageStyle)messageStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+>**NOTE:** 
+>
+>This repo was formerly named `MessagesTableViewController`.
+>
+>And this pod was formerly named `JSMessagesViewController`.
+
+For iOS 6.0 support:
+````
+pod 'JSMessagesViewController', :git => 'https://github.com/jessesquires/JSQMessagesViewController.git', :branch => 'iOS6_support_stable'
 ````
 
-* The [style of the bubble][link1] for this row, options are:
-	* `JSBubbleMessageStyleIncomingDefault`
-	* `JSBubbleMessageStyleIncomingSquare`
-	* `JSBubbleMessageStyleOutgoingDefault`
-	* `JSBubbleMessageStyleOutgoingDefaultGreen`
-	* `JSBubbleMessageStyleOutgoingSquare`
+## Getting Started
 
-````objective-c 
-- (JSMessagesViewTimestampPolicy)timestampPolicyForMessagesView
+````
+#import <JSQMessagesViewController/JSQMessages.h>    // import all headers
 ````
 
-* How/when to display timestamps for messages, options are:
-	* `JSMessagesViewTimestampPolicyAll`
-	* `JSMessagesViewTimestampPolicyAlternating`
-	* `JSMessagesViewTimestampPolicyEveryThree`
-	* `JSMessagesViewTimestampPolicyEveryFive`
-	* `JSMessagesViewTimestampPolicyCustom`
+* **Demo project**
+  * There's a fucking sweet demo project: `JSQMessages.xcworkspace`.
+  * Run `pod install` first.
 
-````objective-c 
-- (BOOL)hasTimestampForRowAtIndexPath:(NSIndexPath *)indexPath
-````
+* **Model**
+  * Your model objects should conform to the `JSQMessageData` protocol.
+  * However, you may use the provided `JSQMessage` class.
 
-* Returns if this row should display a timestamp or not, based on the value returned from the above method
-* If using a built-in timestamp policy, simply return `[self shouldHaveTimestampForRowAtIndexPath:indexPath]`
-* If using `JSMessagesViewTimestampPolicyCustom`, you are on your own!
+* **View Controller**
+  * Subclass `JSQMessagesViewController`.
+  * Implement the required methods in the `JSQMessagesCollectionViewDataSource` protocol.
+  * Implement the required methods in the `JSQMessagesCollectionViewDelegateFlowLayout` protocol.
 
-#####Implement the `JSMessagesViewDataSource` protocol
+* **Customizing**
+  * The demo project is well-commented. This should help you configure your view however you like.
 
-````objective-c 
-- (NSString *)textForRowAtIndexPath:(NSIndexPath *)indexPath
-````
+## Documentation
 
-* The text to be displayed for this row
+Read the fucking docs, [available here][docsLink] via [@CocoaDocs](https://twitter.com/CocoaDocs).
 
-````objective-c 
-- (NSDate *)timestampForRowAtIndexPath:(NSIndexPath *)indexPath
-````
+## Contribute
 
-* The timestamp to be displayed *above* this row
+Please follow these sweet [contribution guidelines](https://github.com/jessesquires/HowToContribute).
 
-#####Implement the [table view data source][ref1] method that you should be familiar with
+## Donate
 
-````objective-c 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-````
+Support the development of this **free**, open-source library! 
 
-#####Customize
+>*Donations made via [Square Cash](https://square.com/cash)*
 
-* For custom background color, use `- (void)setBackgroundColor:(UIColor *)color`
-* For custom send button, override `- (UIButton *)sendButton`
+><h4><a href="mailto:jesse.squires.developer@gmail.com?cc=cash@square.com&subject=$1&body=Thanks for developing JSQMessagesViewController!">Send $1</a> <em>Just saying thanks!</em></h4>
+<h4><a href="mailto:jesse.squires.developer@gmail.com?cc=cash@square.com&subject=$5&body=Thanks for developing JSQMessagesViewController!">Send $5</a> <em>This control is great!</em></h4>
+<h4><a href="mailto:jesse.squires.developer@gmail.com?cc=cash@square.com&subject=$10&body=Thanks for developing JSQMessagesViewController!">Send $10</a> <em>This totally saved me time!</em></h4>
+<h4><a href="mailto:jesse.squires.developer@gmail.com?cc=cash@square.com&subject=$25&body=Thanks for developing JSQMessagesViewController!">Send $25</a> <em>I want new features!</em></h4>
+<h4><a href="mailto:jesse.squires.developer@gmail.com?cc=cash@square.com&subject=$50&body=Thanks for developing JSQMessagesViewController!">Send $50</a> <em>I love this project!</em></h4>
+>*You can also send donations via [PayPal](https://www.paypal.com) to jesse.squires.developer@gmail.com*
 
-##### Notes
+## Credits
 
-* You may present view programmatically, or use Storyboards
-* Your `JSMessagesViewController` subclass **must** be presented in a `UINavigationController`
+Created by [**@jesse_squires**](https://twitter.com/jesse_squires), a [programming-motherfucker](http://programming-motherfucker.com).
 
-##### Demo projects included
+* Assets extracted using [**@0xced**](https://github.com/0xced) / [iOS-Artwork-Extractor](https://github.com/0xced/iOS-Artwork-Extractor).
+* Originally inspired by [**@soffes**](http://github.com/soffes) / [SSMessagingViewController](https://github.com/soffes/ssmessagesviewcontroller).
+* Many thanks to [**the contributors**](https://github.com/jessesquires/JSQMessagesViewController/graphs/contributors) of this project.
 
-* `MessagesDemo.xcodeproj` for example of programmatic presentation
-* `MessagesDemoStoryboards/MessagesDemoSB.xcodeproj` for example of use with Storyboards
+## About
 
-## ToDo
+I initially developed this library to use in [Hemoglobe](http://bit.ly/hmglb) for private messages between users. 
 
-* Landscape mode
-* Allow text input view to resize up to navigation bar (instead of only 5 lines)
-* Display "To: <recipient>" search field for new messages
-* Option for user avatar to display next to bubbles
-* "Send" images or video
+As it turns out, messaging is something that iOS devs and users really want. Messaging of any kind has turned out to be an increasingly popular mobile app feature in all sorts of contexts and for all sorts of reasons. Thus, I am supporting this project in my free time and have added features way beyond what Hemoglobe ever needed.
 
-## Apps Using This Control
+Feel free to check out my work at [Hexed Bits](http://bit.ly/0x29A), or read [my blog](http://bit.ly/jsqsf).
 
-[Hemoglobe](http://bit.ly/hemoglobeapp)
+## Apps using this library
 
-*[Contact me](mailto:jesse.d.squires@gmail.com) to have your app listed here.*
+* [Hemoglobe](http://bit.ly/hemoglobeapp)
+* [ClassDojo](https://itunes.apple.com/us/app/classdojo/id552602056)
+* [Schools App](https://itunes.apple.com/us/app/schools-app/id495845755)
+* [ChatSecure](https://chatsecure.org)
+* [Kytt](https://itunes.apple.com/de/app/kytt-neue-leute-in-der-umgebung/id848959696)
+* [Spark Social](https://itunes.apple.com/us/app/spark-social/id823785892)
+* [Spabbit](https://itunes.apple.com/us/app/spabbit/id737363908)
+* [Elodie](https://itunes.apple.com/app/elodie/id821610181)
+* [Instaply](https://itunes.apple.com/us/app/instaply/id558562920)
+* [Loopse](https://itunes.apple.com/us/app/loopse-spots-friends-sessions/id704783915)
+* [Oxwall Messenger](https://github.com/tochman/OxwallMessenger)
+* [FourChat](https://itunes.apple.com/us/app/fourchat/id650833730)
+* [vCinity](https://itunes.apple.com/us/app/vcinity-chat-without-internet/id875395391)
+* [Quick Text Message](https://itunes.apple.com/us/app/quick-text-message-fast-sms/id583729997)
+* [Libraries for developers](https://itunes.apple.com/us/app/libraries-for-developers/id653427112)
+* [Buhz|Hyve](http://itunes.apple.com/us/app/buhz-hyve/id818568956)
+* [PocketSuite](https://itunes.apple.com/us/app/pocketsuite/id721795146)
+* [Ringring.io](https://github.com/ringring-io/ringring-ios)
+* [gDecide](https://itunes.apple.com/ca/app/gdecide/id716801285)
+* [AwesomeChat](https://github.com/relatedcode/AwesomeChat)
+* [ParseChat](https://github.com/relatedcode/ParseChat)
+* *Your app here*
 
-## Related Projects
+## License
 
-[SSMessagingViewController][ss]
+`JSQMessagesViewController` is released under an [MIT License][mitLink]. See `LICENSE` for details.
 
-[AcaniChat](https://github.com/acani/AcaniChat)
+>**Copyright &copy; 2014 Jesse Squires.**
 
-## [MIT License](http://opensource.org/licenses/MIT)
+*Please provide attribution, it is greatly appreciated.*
 
-You are free to use this as you please. No attribution necessary. **However, a link back to [Hexed Bits](http://www.hexedbits.com) or here would be appreciated. If you use this, please tell me about it!**
+[docsLink]:http://cocoadocs.org/docsets/JSQMessagesViewController
+[mitLink]:http://opensource.org/licenses/MIT
+[playerLink]:https://github.com/jessesquires/JSQSystemSoundPlayer
 
-Copyright &copy; 2013 Jesse Squires
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-[ss]:https://github.com/soffes/ssmessagesviewcontroller
-
-[ref1]:http://developer.apple.com/library/ios/#documentation/uikit/reference/UITableViewDataSource_Protocol/Reference/Reference.html#//apple_ref/occ/intf/UITableViewDataSource
-[ref2]:http://developer.apple.com/library/ios/#documentation/cocoa/conceptual/ProgrammingWithObjectiveC/CustomizingExistingClasses/CustomizingExistingClasses.html
-
-[img1]:https://raw.github.com/jessesquires/MessagesTableViewController/master/Screenshots/iphone5-screenshot1.png
-[img2]:https://raw.github.com/jessesquires/MessagesTableViewController/master/Screenshots/iphone5-screenshot2.png
-[img3]:https://raw.github.com/jessesquires/MessagesTableViewController/master/Screenshots/iphone5-screenshot3.png
-[img4]:https://raw.github.com/jessesquires/MessagesTableViewController/master/Screenshots/iphone5-screenshot4.png
-
-[link1]:https://github.com/jessesquires/MessagesTableViewController/tree/master/Screenshots
+[img1]:https://raw.githubusercontent.com/jessesquires/JSQMessagesViewController/develop/Screenshots/screenshot0.png
+[img2]:https://raw.githubusercontent.com/jessesquires/JSQMessagesViewController/develop/Screenshots/screenshot1.png
