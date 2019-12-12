@@ -57,8 +57,9 @@ static void * kJSQMessagesInputToolbarKeyValueObservingContext = &kJSQMessagesIn
     
     self.jsq_isObserving = NO;
     self.sendButtonOnRight = YES;
-    
-    NSArray *nibViews = [[NSBundle mainBundle] loadNibNamed:NSStringFromClass([JSQMessagesToolbarContentView class]) owner:nil options:nil];
+
+    NSBundle *bundle = [NSBundle bundleForClass:[JSQMessagesToolbarContentView class]];
+    NSArray *nibViews = [bundle loadNibNamed:NSStringFromClass([JSQMessagesToolbarContentView class]) owner:nil options:nil];
     JSQMessagesToolbarContentView *toolbarContentView = [nibViews firstObject];
     toolbarContentView.frame = self.frame;
     [self addSubview:toolbarContentView];
